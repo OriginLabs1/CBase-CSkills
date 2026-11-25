@@ -23,11 +23,12 @@ jobs:
 
       - name: Package artifacts
         run: |
+          VERSION="${GITHUB_REF_NAME#v}"
           mkdir -p dist-release
-          tar -czf dist-release/source.tar.gz \
+          tar -czf dist-release/source-v${VERSION}.tar.gz \
             --exclude=node_modules --exclude=.git --exclude=.svelte-kit --exclude=build --exclude=dist-release .
-          (cd apps/coreskills/build && zip -qr ../../../dist-release/coreskills-v${GITHUB_REF_NAME}.zip .)
-          (cd apps/corebase/build && zip -qr ../../../dist-release/corebase-v${GITHUB_REF_NAME}.zip .)
+          (cd apps/coreskills/build && zip -qr ../../../dist-release/coreskills-v${VERSION}.zip .)
+          (cd apps/corebase/build && zip -qr ../../../dist-release/corebase-v${VERSION}.zip .)
           (cd dist-release && sha256sum * > SHA256SUMS.txt)
 
       - name: Publish GitHub Release
