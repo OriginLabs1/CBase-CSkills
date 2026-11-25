@@ -1,4 +1,4 @@
-const CACHE = 'corebase-v0.0.1';
+const CACHE = 'corebase-v0.0.2';
 const SHELL = ['/', '/index.html', '/favicon.svg', '/manifest.webmanifest', '/icon-192.png'];
 
 self.addEventListener('install', (event) => {
@@ -28,6 +28,22 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
+
+  // App code must never be served from a stale cache when a newer deploy exists.
+  if (url.pathname.startsWith('/_app/')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
     );
     return;
   }
