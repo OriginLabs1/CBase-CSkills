@@ -20,11 +20,25 @@ jobs:
       matrix:
         include:
           - app: coreskills
-            package: '@oneorigin/coreskills'
-            project: coreskills
+            project: coreskills-pwa
+            dir: apps/coreskills/build
+            build: npm run build -w @oneorigin/coreskills
+            pwa: true
           - app: corebase
-            package: '@oneorigin/corebase'
-            project: corebase
+            project: corebase-pwa
+            dir: apps/corebase/build
+            build: npm run build -w @oneorigin/corebase
+            pwa: true
+          - app: coreskills-pages
+            project: coreskills-pages
+            dir: apps/coreskills-pages
+            build: npm run pages:sync
+            pwa: false
+          - app: corebase-pages
+            project: corebase-pages
+            dir: apps/corebase-pages
+            build: npm run pages:sync
+            pwa: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,16 +47,21 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Build ${{ matrix.app }}
-        run: npm run build -w ${{ matrix.package }}
-      - name: Verify offline shell and PWA assets
+        run: ${{ matrix.build }}
+      - name: Verify assets
         run: |
-          test -f apps/${{ matrix.app }}/build/index.html
-          test -f apps/${{ matrix.app }}/build/404.html
-          test -f apps/${{ matrix.app }}/build/manifest.webmanifest
-          test -f apps/${{ matrix.app }}/build/sw.js
+          test -f ${{ matrix.dir }}/index.html
+          if [ '${{ matrix.pwa }}' = 'true' ]; then
+            test -f ${{ matrix.dir }}/404.html
+            test -f ${{ matrix.dir }}/manifest.webmanifest
+            test -f ${{ matrix.dir }}/sw.js
+          else
+            test -f ${{ matrix.dir }}/assets/site.css
+            test -f ${{ matrix.dir }}/assets/site.js
+          fi
       - name: Deploy ${{ matrix.app }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy apps/${{ matrix.app }}/build --project-name=${{ matrix.project }} --branch=main --commit-dirty=true
+          command: pages deploy ${{ matrix.dir }} --project-name=${{ matrix.project }} --branch=main --commit-dirty=true

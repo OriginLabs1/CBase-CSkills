@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CoreSkills — Local capability catalog</title>
+  <meta name="description" content="Author, validate, version and share portable SKILL.md capabilities. Local-first, guest-friendly, and honest about trust." />
+  <meta name="theme-color" content="#080d18" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23080d18'/><path d='M32 8l5 12 13 2-10 9 3 13-11-7-11 7 3-13-10-9 13-2z' fill='%237dd3fc'/></svg>" />
+  <link rel="stylesheet" href="assets/site.css" />
+  <script src="assets/site.js" defer></script>
+</head>
+<body data-product="skills">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="progress" data-progress aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="CoreSkills home">
+        <span class="brand-mark">CS</span>
+        <span>CoreSkills <small class="brand-sub">v0.0.1</small></span>
+      </a>
+      <nav class="nav-links" data-nav aria-label="Main navigation">
+        <a href="#why">Why</a>
+        <a href="#features">Features</a>
+        <a href="#lifecycle">Lifecycle</a>
+        <a href="#docs">Docs</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="header-actions">
+        <a class="btn btn-primary btn-sm" href="https://coreskills.cculture.net">Open app</a>
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">◐</button>
+        <button class="icon-btn nav-toggle" type="button" data-nav-toggle aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div class="reveal">
+          <span class="eyebrow"><span class="dot"></span> Local capability catalog · v0.0.1</span>
+          <h1>Skills that stay <em>yours.</em></h1>
+          <p class="hero-lead">Author, validate and version portable <code class="inline-code">SKILL.md</code> capabilities on your own device. No account, no cloud, no surprises — just skills you can inspect, trust and carry anywhere.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://coreskills.cculture.net">Launch CoreSkills →</a>
+            <a class="btn btn-secondary" href="https://github.com/OriginLabs1/CBase-CSkills/tree/main/docs/specs">Read the specs</a>
+            <a class="btn btn-secondary" href="https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1">Download v0.0.1</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><strong>0</strong><span>accounts required</span></div>
+            <div class="stat"><strong>100%</strong><span>local IndexedDB</span></div>
+            <div class="stat"><strong>SHA-256</strong><span>content identity</span></div>
+            <div class="stat"><strong>∞</strong><span>restorable versions</span></div>
+          </div>
+        </div>
+        <div class="hero-art reveal">
+          <div class="window">
+            <div class="window-bar"><i></i><i></i><i></i><span>privacy-review / SKILL.md</span></div>
+            <div class="window-body">
+              <div><span class="dim">---</span></div>
+              <div><span class="key">name:</span> <span class="val">privacy-review</span></div>
+              <div><span class="key">description:</span> <span class="val">Review a change for data minimization.</span></div>
+              <div><span class="key">version:</span> <span class="val">0.1.0</span></div>
+              <div><span class="key">permissions:</span></div>
+              <div>&nbsp;&nbsp;<span class="key">- scope:</span> <span class="val">workspace.files.read</span></div>
+              <div><span class="dim">---</span></div>
+              <div class="dim">&nbsp;</div>
+              <div><span class="ok">✓</span> canonical form parsed</div>
+              <div><span class="ok">✓</span> identity sha256:8f2c…a91d</div>
+              <div><span class="warn">!</span> SEC001 instruction-like body — review</div>
+            </div>
+          </div>
+          <div class="float-chip"><b>Stored here.</b> Not uploaded.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="trust-strip reveal">
+        <div class="trust-item"><b>Local-first</b>Your device is the source of truth</div>
+        <div class="trust-item"><b>Guest-ready</b>Full value without sign-in</div>
+        <div class="trust-item"><b>Least authority</b>Every request is explicit</div>
+        <div class="trust-item"><b>Honest hashes</b>Integrity, not safety</div>
+      </div>
+    </div>
+
+    <section class="section" id="why">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">The problem</span>
+          <h2>Capabilities deserve better than copy-paste folklore.</h2>
+          <p>Skills usually arrive as prose in a chat, a gist, or a screenshot. CoreSkills gives them a durable shape, a verifiable identity and a history you can actually reason about.</p>
+        </div>
+        <div class="grid grid-3">
+          <article class="card reveal"><div class="card-icon">✎</div><h3>Ambiguous format</h3><p>A skill is prose, metadata and permission requests mixed together. Without a contract, two “identical” copies are not identical.</p></article>
+          <article class="card reveal"><div class="card-icon">◈</div><h3>Vague permissions</h3><p>“Needs file access” tells you nothing. CoreSkills records exact scopes so a human can decide what to allow.</p></article>
+          <article class="card reveal"><div class="card-icon">⟲</div><h3>Lost provenance</h3><p>Editing in place erases where a skill came from. Every version stays content-addressed and restorable.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="features">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">What you get</span>
+          <h2>A workshop, not a black box.</h2>
+          <p>Everything is inspectable. The catalog is a local library with a paper trail.</p>
+        </div>
+        <div class="grid grid-3">
+          <article class="card reveal"><div class="card-icon">✦</div><h3>Live authoring</h3><p>Write <code>SKILL.md</code> in CodeMirror with validation as you type. Errors are clear; warnings stay visible.</p></article>
+          <article class="card reveal"><div class="card-icon">⇩</div><h3>Guarded import</h3><p>Paste or pick files. Stable codes such as <code>FM001</code> and <code>SEC001</code> tell you exactly what happened.</p></article>
+          <article class="card reveal"><div class="card-icon">⧉</div><h3>Immutable versions</h3><p>Edits create new hash-addressed versions. Restore any earlier state without destroying the present.</p></article>
+          <article class="card reveal"><div class="card-icon">⌕</div><h3>Fast discovery</h3><p>Search by name, description or tag; filter by capability kind; sort by recency or name.</p></article>
+          <article class="card reveal"><div class="card-icon">▣</div><h3>Portable bundles</h3><p>Export a signed-off bundle of current skills plus full history. Import only after every hash verifies.</p></article>
+          <article class="card reveal"><div class="card-icon">✓</div><h3>Trust surfaced</h3><p>Checksums are labelled honestly: they establish integrity and origin, <em>not</em> that a skill is safe.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="lifecycle">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">How it works</span>
+          <h2>From raw text to trusted capability.</h2>
+          <p>Six small steps, each observable. Nothing is accepted silently.</p>
+        </div>
+        <div class="flow">
+          <div class="step reveal"><h4>Capture</h4><p>Paste text, choose files, or start a new draft.</p></div>
+          <div class="step reveal"><h4>Parse</h4><p>Frontmatter and body become a structured document.</p></div>
+          <div class="step reveal"><h4>Diagnose</h4><p>Conformance rules emit errors, warnings and notes.</p></div>
+          <div class="step reveal"><h4>Review</h4><p>You decide what enters the catalog. Errors always block.</p></div>
+          <div class="step reveal"><h4>Version</h4><p>Canonical bytes are hashed and stored immutably.</p></div>
+          <div class="step reveal"><h4>Share</h4><p>Export a single file or a verified portable bundle.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container split">
+        <div class="split-copy reveal">
+          <span class="section-tag">Strategic fit</span>
+          <h2>CoreSkills defines what. CoreBase decides how.</h2>
+          <p>CoreSkills produces portable capability descriptions with explicit scopes. CoreBase consumes them as intents, plans execution, asks for approval and records the result in a hash-chained audit.</p>
+          <ul class="check-list">
+            <li>Shared contracts mean a skill written here is intelligible there.</li>
+            <li>Permissions are data, not vibes — so agents can request and humans can revoke.</li>
+            <li>Identity is content-addressed, so provenance survives export and import.</li>
+          </ul>
+          <p style="margin-top:1.4rem"><a class="btn btn-secondary" href="https://corebase-pages.cculture.net">Meet CoreBase →</a></p>
+        </div>
+        <div class="reveal">
+          <div class="code">
+            <div class="code-head"><span>shared contract · capability → intent</span><button class="copy-btn" type="button" data-copy>Copy</button></div>
+            <pre><code><span class="c-com">// CoreSkills emits a manifest</span>
+{
+  <span class="c-key">"name"</span>: <span class="c-str">"skill.privacy-review"</span>,
+  <span class="c-key">"kind"</span>: <span class="c-str">"human-skill"</span>,
+  <span class="c-key">"permissions"</span>: [{
+    <span class="c-key">"scope"</span>: <span class="c-str">"workspace.files.read"</span>,
+    <span class="c-key">"reason"</span>: <span class="c-str">"Inspect files before review"</span>
+  }],
+  <span class="c-key">"identity"</span>: <span class="c-str">"sha256:8f2c…a91d"</span>
+}
+
+<span class="c-com">// CoreBase receives it as a bounded intent</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="docs">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">Documentation</span>
+          <h2>Everything you need, locally.</h2>
+          <p>A compact guide to the format, diagnostics, storage and trust model. The normative source lives in the repository.</p>
+        </div>
+        <div class="docs">
+          <aside class="docs-sidebar reveal" aria-label="Documentation contents">
+            <strong>On this page</strong>
+            <a href="#doc-start">Quick start</a>
+            <a href="#doc-format">SKILL.md shape</a>
+            <a href="#doc-codes">Diagnostics</a>
+            <a href="#doc-permissions">Permissions</a>
+            <a href="#doc-storage">Storage &amp; bundles</a>
+            <a href="#doc-specs">Normative specs</a>
+          </aside>
+          <div>
+            <article class="doc-section reveal" id="doc-start">
+              <h3>Quick start</h3>
+              <p>Open the app, choose <b>Author</b>, and start from a sample. Validation runs live. When the document is clean, save it to the local catalog. No account screen exists — guest mode is the product.</p>
+              <div class="callout">PWA-ready: install from your browser’s menu for an offline-capable app shell. All skill bytes stay in IndexedDB on that device.</div>
+            </article>
+            <article class="doc-section reveal" id="doc-format">
+              <h3>SKILL.md shape</h3>
+              <p>A document is YAML frontmatter plus a Markdown body. The canonical form sorts tags, normalises line endings and hashes the result.</p>
+              <div class="code" style="margin-top:1rem">
+                <div class="code-head"><span>example SKILL.md</span><button class="copy-btn" type="button" data-copy>Copy</button></div>
+                <pre><code><span class="c-com">---</span>
+<span class="c-key">name:</span> <span class="c-str">meeting-notes</span>
+<span class="c-key">description:</span> <span class="c-str">Turn notes into decisions and owners.</span>
+<span class="c-key">version:</span> <span class="c-str">0.2.0</span>
+<span class="c-key">tags:</span> [meetings, writing]
+<span class="c-key">kind:</span> <span class="c-str">human-skill</span>
+<span class="c-key">permissions:</span>
+  - <span class="c-key">scope:</span> <span class="c-str">workspace.files.read</span>
+    <span class="c-key">reason:</span> <span class="c-str">Read the supplied notes</span>
+<span class="c-com">---</span>
+
+Summarise decisions, owners and open questions.
+Never invent an owner.</code></pre>
+              </div>
+            </article>
+            <article class="doc-section reveal" id="doc-codes">
+              <h3>Diagnostics</h3>
+              <p>Codes are stable so tooling and humans can reason about them. Errors block import; warnings and notes are surfaced for review.</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Code</th><th>Level</th><th>Meaning</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>FM001</code></td><td>Error</td><td>Missing YAML frontmatter block.</td></tr>
+                    <tr><td><code>SEC001</code></td><td>Warning</td><td>Body contains instruction-override language.</td></tr>
+                    <tr><td><code>ID001</code></td><td>Note</td><td>Identity derived from canonical content, not filename.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article class="doc-section reveal" id="doc-permissions">
+              <h3>Permissions</h3>
+              <p>Each request names a scope, a reason and an expected effect. CoreSkills never executes a skill; it describes authority so an executor can ask precisely.</p>
+              <div class="callout warn"><b>Read this before trusting a skill.</b> A checksum proves that bytes match a known identity. It does not prove the bytes are benign. Review the body and the permission scopes yourself.</div>
+            </article>
+            <article class="doc-section reveal" id="doc-storage">
+              <h3>Storage &amp; bundles</h3>
+              <p>The browser stores skills, versions, settings and import reviews in IndexedDB. A portable bundle uses <code>oneorigin.bundle/v0.0.1</code> and carries current documents plus their history. Every item hash and the bundle manifest are verified before import writes anything.</p>
+            </article>
+            <article class="doc-section reveal" id="doc-specs">
+              <h3>Normative specs</h3>
+              <p>The contracts are versioned and independent of this implementation. Start with the SKILL.md conformance and trust specs:</p>
+              <ul class="check-list">
+                <li><a href="https://github.com/OriginLabs1/CBase-CSkills/blob/main/docs/specs/02-skill-md-conformance.md">02 — SKILL.md conformance</a></li>
+                <li><a href="https://github.com/OriginLabs1/CBase-CSkills/blob/main/docs/specs/03-trust-permissions.md">03 — Trust &amp; permissions</a></li>
+                <li><a href="https://github.com/OriginLabs1/CBase-CSkills/blob/main/docs/specs/05-storage-and-portability.md">05 — Storage &amp; portability</a></li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head reveal"><span class="section-tag">Questions</span><h2>Honest answers.</h2></div>
+        <div class="grid grid-2">
+          <details class="reveal"><summary>Do I need an account?</summary><p>No. Guest mode is the default and the complete experience. There is no sign-in, no sync service and no telemetry toggle to find.</p></details>
+          <details class="reveal"><summary>Does a verified bundle mean a skill is safe?</summary><p>No. Verification establishes integrity and origin — that the bytes match the recorded identity. Safety still requires human review of the body and requested scopes.</p></details>
+          <details class="reveal"><summary>Can CoreSkills run my skills?</summary><p>No. It is a catalog and authoring tool. Execution belongs to CoreBase, which plans actions and asks for explicit approval before touching a virtual workspace.</p></details>
+          <details class="reveal"><summary>What happens if I edit a skill?</summary><p>A new immutable version is written. The previous version remains restorable, and the identity changes because identity is derived from canonical content.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt final-cta">
+      <div class="container reveal">
+        <h2>Make your skills yours again.</h2>
+        <p>Open the app, author a capability, and see exactly what it asks for. Nothing leaves your device.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a class="btn btn-primary" href="https://coreskills.cculture.net">Open CoreSkills →</a>
+          <a class="btn btn-secondary" href="https://github.com/OriginLabs1/CBase-CSkills">View the repository</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>OneOrigin · CoreSkills v0.0.1 · <span data-year>2026</span></div>
+      <div class="footer-links">
+        <a href="https://coreskills.cculture.net">App</a>
+        <a href="https://github.com/OriginLabs1/CBase-CSkills/tree/main/docs/specs">Specs</a>
+        <a href="https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1">Release</a>
+        <a href="https://corebase-pages.cculture.net">CoreBase</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

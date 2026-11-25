@@ -36,12 +36,23 @@ Set these in **Settings → Secrets and variables → Actions**:
 
 Do not place tokens in source, workflow files, logs, bundles or skill manifests. Rotate any token that has been pasted into a chat or logged.
 
-Cloudflare Pages projects: `coreskills` and `corebase`. Build output directories: `apps/coreskills/build` and `apps/corebase/build`. The `404.html` fallback provides SPA routing.
+Cloudflare Pages projects:
+
+| Project | Source directory | Custom domain |
+| --- | --- | --- |
+| `coreskills-pwa` | `apps/coreskills/build` | https://coreskills.cculture.net |
+| `corebase-pwa` | `apps/corebase/build` | https://corebase.cculture.net |
+| `coreskills-pages` | `apps/coreskills-pages` | https://coreskills-pages.cculture.net |
+| `corebase-pages` | `apps/corebase-pages` | https://corebase-pages.cculture.net |
+
+The `*-pwa` projects are the installable applications; the `404.html` fallback provides SPA routing. The `*-pages` projects are static presentation and documentation sites sharing `apps/pages-shared` assets, synced by `npm run pages:sync`. All four use the production branch `main`, with proxied CNAMEs to the matching `*.pages.dev` project domains.
 
 Live v0.0.1 deployments:
 
-- CoreSkills: https://9d7d2ab9.coreskills.pages.dev
-- CoreBase: https://d1861aaf.corebase-8fb.pages.dev
+- CoreSkills app: https://coreskills.cculture.net
+- CoreBase app: https://corebase.cculture.net
+- CoreSkills docs: https://coreskills-pages.cculture.net
+- CoreBase docs: https://corebase-pages.cculture.net
 
 Published release: https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1
 

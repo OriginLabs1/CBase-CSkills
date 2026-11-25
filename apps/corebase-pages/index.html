@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CoreBase — A local workspace with a paper trail</title>
+  <meta name="description" content="Work locally with files, a bounded virtual shell, explicit approvals and a hash-chained audit from intent to result." />
+  <meta name="theme-color" content="#080d18" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23080d18'/><rect x='13' y='13' width='38' height='38' rx='8' fill='none' stroke='%236ee7b7' stroke-width='4'/><path d='M21 32h22M32 21v22' stroke='%236ee7b7' stroke-width='4' stroke-linecap='round'/></svg>" />
+  <link rel="stylesheet" href="assets/site.css" />
+  <script src="assets/site.js" defer></script>
+</head>
+<body data-product="base">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="progress" data-progress aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="CoreBase home">
+        <span class="brand-mark">CB</span>
+        <span>CoreBase <small class="brand-sub">v0.0.1</small></span>
+      </a>
+      <nav class="nav-links" data-nav aria-label="Main navigation">
+        <a href="#why">Why</a>
+        <a href="#features">Features</a>
+        <a href="#lifecycle">Lifecycle</a>
+        <a href="#docs">Docs</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="header-actions">
+        <a class="btn btn-primary btn-sm" href="https://corebase.cculture.net">Open app</a>
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">◐</button>
+        <button class="icon-btn nav-toggle" type="button" data-nav-toggle aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div class="reveal">
+          <span class="eyebrow"><span class="dot"></span> Local workspace · v0.0.1</span>
+          <h1>Do real work. <em>Leave a trail.</em></h1>
+          <p class="hero-lead">A local files-and-execution environment with a bounded virtual shell, explicit approvals and a tamper-evident audit chain. Guest-owned, offline-capable, and never a backdoor to your machine.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://corebase.cculture.net">Launch CoreBase →</a>
+            <a class="btn btn-secondary" href="https://github.com/OriginLabs1/CBase-CSkills/tree/main/docs/specs">Read the specs</a>
+            <a class="btn btn-secondary" href="https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1">Download v0.0.1</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><strong>12</strong><span>bounded commands</span></div>
+            <div class="stat"><strong>8</strong><span>lifecycle stages</span></div>
+            <div class="stat"><strong>0</strong><span>host shell calls</span></div>
+            <div class="stat"><strong>SHA-256</strong><span>audit hash chain</span></div>
+          </div>
+        </div>
+        <div class="hero-art reveal">
+          <div class="window">
+            <div class="window-bar"><i></i><i></i><i></i><span>audit · hash chain</span></div>
+            <div class="window-body">
+              <div><span class="dim">genesis</span> <span class="val">0000…0000</span></div>
+              <div><span class="key">intent</span> &nbsp;&nbsp;&nbsp;→ <span class="val">a13f…91c2</span></div>
+              <div><span class="key">plan</span> &nbsp;&nbsp;&nbsp;&nbsp;→ <span class="val">5ce0…44b8</span></div>
+              <div><span class="key">authorize</span> → <span class="val">9d71…0af3</span></div>
+              <div><span class="key">execute</span> &nbsp;→ <span class="val">2bb4…cc10</span></div>
+              <div><span class="key">verify</span> &nbsp;&nbsp;→ <span class="ok">expected state matched</span></div>
+              <div class="dim">&nbsp;</div>
+              <div><span class="ok">✓</span> chain verified · <span class="val">42 entries</span></div>
+              <div><span class="dim">no network · no eval · no host access</span></div>
+            </div>
+          </div>
+          <div class="float-chip"><b>Every step recorded.</b> Nothing repaired silently.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="trust-strip reveal">
+        <div class="trust-item"><b>Sandboxed by design</b>Virtual filesystem only</div>
+        <div class="trust-item"><b>Default deny</b>No grant, no action</div>
+        <div class="trust-item"><b>Verifiable</b>Chain breaks stay visible</div>
+        <div class="trust-item"><b>Guest-owned</b>No account required</div>
+      </div>
+    </div>
+
+    <section class="section" id="why">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">The problem</span>
+          <h2>Agents are useful. Unbounded agents are a liability.</h2>
+          <p>Giving a browser a real shell is a security mistake. Giving it an opaque “do the thing” button is a trust mistake. CoreBase takes a third path: a deliberately small virtual workspace where each action is scoped, approved and recorded.</p>
+        </div>
+        <div class="grid grid-3">
+          <article class="card reveal"><div class="card-icon">⌘</div><h3>No browser shell</h3><p>There is no <code>eval</code>, spawn or network call. The virtual shell implements a fixed command set over IndexedDB files.</p></article>
+          <article class="card reveal"><div class="card-icon">◇</div><h3>No implicit consent</h3><p>Authority is granted per scope, target and expiry. Revocation is immediate and itself audited.</p></article>
+          <article class="card reveal"><div class="card-icon">⤳</div><h3>No invisible changes</h3><p>Every lifecycle stage is appended to a canonical hash chain. If a link breaks, the UI says so.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="features">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">What you get</span>
+          <h2>A workspace that can explain itself.</h2>
+          <p>Files, commands, approvals and history in one local environment.</p>
+        </div>
+        <div class="grid grid-3">
+          <article class="card reveal"><div class="card-icon">▤</div><h3>Persistent projects</h3><p>Create projects and files in local IndexedDB. Edit with CodeMirror, track dirty state, save with intent.</p></article>
+          <article class="card reveal"><div class="card-icon">›_</div><h3>Virtual shell</h3><p>Exactly twelve bounded commands — navigation, inspection and in-memory file operations. Unknown commands fail helpfully.</p></article>
+          <article class="card reveal"><div class="card-icon">⛨</div><h3>Approval dialogs</h3><p>Requests name the adapter, capability, exact target, scopes and reason. Approve, deny or revoke later.</p></article>
+          <article class="card reveal"><div class="card-icon">⛓</div><h3>Hash-chained audit</h3><p>Canonical JSON entries link to the previous hash. Integrity is checked on load and never silently repaired.</p></article>
+          <article class="card reveal"><div class="card-icon">↶</div><h3>Checkpoints</h3><p>Immutable, content-addressed snapshots of files plus the audit head. Restore a known-good state from Settings.</p></article>
+          <article class="card reveal"><div class="card-icon">◌</div><h3>Offline agent adapter</h3><p>A deterministic offline planner produces structured plans. The remote stub is explicitly disabled — no keys, no calls.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="lifecycle">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">How it works</span>
+          <h2>Intent to result, without the hand-waving.</h2>
+          <p>Each stage is recorded before the next begins. Verification checks both exit status and expected state.</p>
+        </div>
+        <div class="flow">
+          <div class="step reveal"><h4>Intent</h4><p>The human goal is captured verbatim.</p></div>
+          <div class="step reveal"><h4>Plan</h4><p>A bounded, structured plan is produced.</p></div>
+          <div class="step reveal"><h4>Authorize</h4><p>Required scopes are checked against grants.</p></div>
+          <div class="step reveal"><h4>Approve</h4><p>A human sees the exact action and target.</p></div>
+          <div class="step reveal"><h4>Execute</h4><p>The virtual adapter runs a bounded command.</p></div>
+          <div class="step reveal"><h4>Verify</h4><p>Exit code and expected state must both match.</p></div>
+          <div class="step reveal"><h4>Persist</h4><p>File changes are written locally and atomically.</p></div>
+          <div class="step reveal"><h4>Provenance</h4><p>Fingerprints and hashes close the chain.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container split">
+        <div class="split-copy reveal">
+          <span class="section-tag">Strategic fit</span>
+          <h2>CoreSkills writes the brief. CoreBase carries it out.</h2>
+          <p>A capability authored in CoreSkills arrives with a manifest, a content identity and explicit scopes. CoreBase treats that as an intent: it plans, asks for authority, executes inside the sandbox, verifies, and records provenance.</p>
+          <ul class="check-list">
+            <li>Shared contracts keep the handoff machine-readable.</li>
+            <li>The same permission vocabulary powers requests and approvals.</li>
+            <li>Checksums travel with the capability so provenance survives the trip.</li>
+          </ul>
+          <p style="margin-top:1.4rem"><a class="btn btn-secondary" href="https://coreskills-pages.cculture.net">Meet CoreSkills →</a></p>
+        </div>
+        <div class="reveal">
+          <div class="code">
+            <div class="code-head"><span>shared contract · intent → provenance</span><button class="copy-btn" type="button" data-copy>Copy</button></div>
+            <pre><code><span class="c-com">// Incoming capability manifest</span>
+{
+  <span class="c-key">"capability"</span>: <span class="c-str">"skill.privacy-review"</span>,
+  <span class="c-key">"identity"</span>: <span class="c-str">"sha256:8f2c…a91d"</span>,
+  <span class="c-key">"requested"</span>: [<span class="c-str">"workspace.files.read"</span>]
+}
+
+<span class="c-com">// Outbound audit entry (canonical JSON, chained)</span>
+{
+  <span class="c-key">"stage"</span>: <span class="c-str">"verification"</span>,
+  <span class="c-key">"status"</span>: <span class="c-str">"passed"</span>,
+  <span class="c-key">"previousHash"</span>: <span class="c-str">"9d71…0af3"</span>,
+  <span class="c-key">"inputHash"</span>: <span class="c-str">"2bb4…cc10"</span>
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="docs">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">Documentation</span>
+          <h2>Small enough to audit.</h2>
+          <p>The essentials for using and extending CoreBase safely.</p>
+        </div>
+        <div class="docs">
+          <aside class="docs-sidebar reveal" aria-label="Documentation contents">
+            <strong>On this page</strong>
+            <a href="#doc-start">Quick start</a>
+            <a href="#doc-commands">Virtual commands</a>
+            <a href="#doc-permissions">Permissions</a>
+            <a href="#doc-audit">Audit chain</a>
+            <a href="#doc-storage">Storage &amp; restore</a>
+            <a href="#doc-specs">Normative specs</a>
+          </aside>
+          <div>
+            <article class="doc-section reveal" id="doc-start">
+              <h3>Quick start</h3>
+              <p>Open the app. A sample project is seeded on first run with files and a terminal session. Switch to the <b>Terminal</b> tab and type <code>help</code> to see the bounded command set. Actions that touch files ask for approval before they run.</p>
+              <div class="callout">The adapter is a virtual shell over IndexedDB. It cannot reach your host filesystem, spawn processes or make network requests.</div>
+            </article>
+            <article class="doc-section reveal" id="doc-commands">
+              <h3>Virtual commands</h3>
+              <p>Twelve commands, deliberately boring. Each has an explicit scope and a verifiable expected state.</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Group</th><th>Commands</th><th>Purpose</th></tr></thead>
+                  <tbody>
+                    <tr><td>Navigate</td><td><code>pwd</code> <code>ls</code> <code>cd</code></td><td>Inspect the virtual tree.</td></tr>
+                    <tr><td>Read</td><td><code>cat</code> <code>find</code> <code>stat</code></td><td>Inspect file contents and metadata.</td></tr>
+                    <tr><td>Write</td><td><code>mkdir</code> <code>touch</code> <code>write</code> <code>rm</code></td><td>Change virtual files under approval.</td></tr>
+                    <tr><td>Meta</td><td><code>help</code> <code>clear</code></td><td>Discover commands and reset the view.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article class="doc-section reveal" id="doc-permissions">
+              <h3>Permissions</h3>
+              <p>Decisions are default-deny. A grant is scoped, targeted and expiring; revocation writes an audit event so the history shows when authority ended.</p>
+              <div class="code" style="margin-top:1rem">
+                <div class="code-head"><span>approval request</span><button class="copy-btn" type="button" data-copy>Copy</button></div>
+                <pre><code>{
+  <span class="c-key">"adapter"</span>: <span class="c-str">"virtual-shell"</span>,
+  <span class="c-key">"capability"</span>: <span class="c-str">"file.write"</span>,
+  <span class="c-key">"target"</span>: <span class="c-str">"notes/ideas.md"</span>,
+  <span class="c-key">"scopes"</span>: [<span class="c-str">"workspace.files.write"</span>],
+  <span class="c-key">"reason"</span>: <span class="c-str">"Append summary from the planned edit"</span>,
+  <span class="c-key">"expiresAt"</span>: <span class="c-str">"2026-11-25T09:30:00Z"</span>
+}</code></pre>
+              </div>
+            </article>
+            <article class="doc-section reveal" id="doc-audit">
+              <h3>Audit chain</h3>
+              <p>Every entry is canonical JSON hashed with SHA-256 and linked to the previous hash. The chain starts at a genesis hash of sixty-four zeroes. Verification reports breaks; it never “fixes” them.</p>
+              <div class="callout warn"><b>Honest by design.</b> A valid chain proves continuity and integrity. It does not prove that an approved action was wise.</div>
+            </article>
+            <article class="doc-section reveal" id="doc-storage">
+              <h3>Storage &amp; restore</h3>
+              <p>Projects, files, terminal sessions, grants, checkpoints and settings live in a local IndexedDB database. Checkpoints capture file bytes plus the audit head, so restoring also rewinds provenance to the recorded state.</p>
+            </article>
+            <article class="doc-section reveal" id="doc-specs">
+              <h3>Normative specs</h3>
+              <p>Start with the execution lifecycle and trust model; the storage spec covers portability.</p>
+              <ul class="check-list">
+                <li><a href="https://github.com/OriginLabs1/CBase-CSkills/blob/main/docs/specs/03-trust-permissions.md">03 — Trust &amp; permissions</a></li>
+                <li><a href="https://github.com/OriginLabs1/CBase-CSkills/blob/main/docs/specs/04-execution-lifecycle.md">04 — Execution lifecycle</a></li>
+                <li><a href="https://github.com/OriginLabs1/CBase-CSkills/blob/main/docs/specs/05-storage-and-portability.md">05 — Storage &amp; portability</a></li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head reveal"><span class="section-tag">Questions</span><h2>Straight answers.</h2></div>
+        <div class="grid grid-2">
+          <details class="reveal"><summary>Can it run commands on my computer?</summary><p>No. The shell is an in-browser adapter over IndexedDB with twelve bounded commands. There is no host shell, process spawn, network access or file-system bridge.</p></details>
+          <details class="reveal"><summary>What if an agent asks for something dangerous?</summary><p>The plan is checked against scopes. Anything requiring authority opens an approval dialog showing the exact adapter, capability, target and reason. Deny it and nothing executes.</p></details>
+          <details class="reveal"><summary>What does a broken audit chain look like?</summary><p>The Audit tab reports a chain break with the affected entry. CoreBase never rewrites history to hide it.</p></details>
+          <details class="reveal"><summary>Is the remote agent adapter active?</summary><p>No. It is an explicit stub with no credentials and no API calls. The working planner is deterministic and offline.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt final-cta">
+      <div class="container reveal">
+        <h2>Work locally. Sleep better.</h2>
+        <p>Open CoreBase and inspect the audit trail of your very first command.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a class="btn btn-primary" href="https://corebase.cculture.net">Open CoreBase →</a>
+          <a class="btn btn-secondary" href="https://github.com/OriginLabs1/CBase-CSkills">View the repository</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>OneOrigin · CoreBase v0.0.1 · <span data-year>2026</span></div>
+      <div class="footer-links">
+        <a href="https://corebase.cculture.net">App</a>
+        <a href="https://github.com/OriginLabs1/CBase-CSkills/tree/main/docs/specs">Specs</a>
+        <a href="https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1">Release</a>
+        <a href="https://coreskills-pages.cculture.net">CoreSkills</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

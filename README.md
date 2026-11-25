@@ -32,7 +32,9 @@ docs/
 | Repo + Cloudflare setup | Delivered |
 | Distribution / release | Delivered — [v0.0.1](https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1) |
 
-Live deployments: [CoreSkills](https://9d7d2ab9.coreskills.pages.dev) · [CoreBase](https://d1861aaf.corebase-8fb.pages.dev)
+Live apps: [CoreSkills](https://coreskills.cculture.net) · [CoreBase](https://corebase.cculture.net)
+
+Presentation + docs: [CoreSkills Pages](https://coreskills-pages.cculture.net) · [CoreBase Pages](https://corebase-pages.cculture.net)
 
 ## Governing principles
 
