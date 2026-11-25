@@ -13,6 +13,11 @@ import type {
   VirtualFile,
 } from './types';
 
+/** Structured-clone-safe data: Svelte $state proxies cannot be written to IndexedDB. */
+export function plainClone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
 interface CorebaseSchema extends DBSchema {
   projects: { key: string; value: Project };
   files: {
@@ -200,7 +205,7 @@ export async function appendAuditEntry(input: AppendAuditInput): Promise<AuditEn
     data: input.data,
     previousHash: previous?.entryHash ?? GENESIS_HASH,
   });
-  await db.put('audit', entry);
+  await db.put('audit', plainClone(entry));
   return entry;
 }
 
@@ -218,7 +223,7 @@ export async function listProjects(): Promise<Project[]> {
 
 export async function saveProject(project: Project): Promise<void> {
   const db = await openCorebase();
-  await db.put('projects', project);
+  await db.put('projects', plainClone(project));
 }
 
 export async function listFiles(projectId: string): Promise<VirtualFile[]> {
@@ -234,7 +239,7 @@ export async function getFile(projectId: string, path: string): Promise<VirtualF
 
 export async function putFile(file: VirtualFile): Promise<void> {
   const db = await openCorebase();
-  await db.put('files', file, fileKey(file.projectId, file.path));
+  await db.put('files', plainClone(file), fileKey(file.projectId, file.path));
 }
 
 export async function deleteFile(projectId: string, path: string): Promise<void> {
@@ -270,7 +275,7 @@ export async function getSession(id: string): Promise<TerminalSession | undefine
 
 export async function putSession(session: TerminalSession): Promise<void> {
   const db = await openCorebase();
-  await db.put('sessions', session);
+  await db.put('sessions', plainClone(session));
 }
 
 export async function listGrants(): Promise<Grant[]> {
@@ -286,7 +291,7 @@ export async function getGrant(id: string): Promise<Grant | undefined> {
 
 export async function putGrant(grant: Grant): Promise<void> {
   const db = await openCorebase();
-  await db.put('grants', grant);
+  await db.put('grants', plainClone(grant));
 }
 
 export async function getSettings(): Promise<AppSettings> {
@@ -305,12 +310,12 @@ export async function getSettings(): Promise<AppSettings> {
 
 export async function putSettings(settings: AppSettings): Promise<void> {
   const db = await openCorebase();
-  await db.put('settings', settings);
+  await db.put('settings', plainClone(settings));
 }
 
 export async function putCheckpoint(checkpoint: Checkpoint): Promise<void> {
   const db = await openCorebase();
-  await db.put('checkpoints', checkpoint);
+  await db.put('checkpoints', plainClone(checkpoint));
 }
 
 export async function listCheckpoints(projectId: string): Promise<Checkpoint[]> {
