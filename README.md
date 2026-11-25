@@ -26,11 +26,13 @@ docs/
 
 | Milestone | Status |
 | --- | --- |
-| Shared specs & contracts | In progress |
-| CoreSkills v0.0.1 | Planned |
-| CoreBase v0.0.1 | Planned |
-| Repo + Cloudflare setup | Planned |
-| Distribution / release | Planned |
+| Shared specs & contracts | Delivered |
+| CoreSkills v0.0.1 | Delivered |
+| CoreBase v0.0.1 | Delivered |
+| Repo + Cloudflare setup | Delivered |
+| Distribution / release | Delivered — [v0.0.1](https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1) |
+
+Live deployments: [CoreSkills](https://9d7d2ab9.coreskills.pages.dev) · [CoreBase](https://d1861aaf.corebase-8fb.pages.dev)
 
 ## Governing principles
 

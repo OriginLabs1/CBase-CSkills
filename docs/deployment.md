@@ -38,6 +38,13 @@ Do not place tokens in source, workflow files, logs, bundles or skill manifests.
 
 Cloudflare Pages projects: `coreskills` and `corebase`. Build output directories: `apps/coreskills/build` and `apps/corebase/build`. The `404.html` fallback provides SPA routing.
 
+Live v0.0.1 deployments:
+
+- CoreSkills: https://9d7d2ab9.coreskills.pages.dev
+- CoreBase: https://d1861aaf.corebase-8fb.pages.dev
+
+Published release: https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1
+
 ## Release process
 
 1. Complete milestone acceptance criteria in `docs/roadmap.md`.
