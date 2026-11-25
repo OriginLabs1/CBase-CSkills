@@ -1,0 +1,48 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: coreskills
+            package: '@oneorigin/coreskills'
+            project: coreskills
+          - app: corebase
+            package: '@oneorigin/corebase'
+            project: corebase
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build ${{ matrix.app }}
+        run: npm run build -w ${{ matrix.package }}
+      - name: Verify offline shell and PWA assets
+        run: |
+          test -f apps/${{ matrix.app }}/build/index.html
+          test -f apps/${{ matrix.app }}/build/404.html
+          test -f apps/${{ matrix.app }}/build/manifest.webmanifest
+          test -f apps/${{ matrix.app }}/build/sw.js
+      - name: Deploy ${{ matrix.app }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy apps/${{ matrix.app }}/build --project-name=${{ matrix.project }} --branch=main --commit-dirty=true

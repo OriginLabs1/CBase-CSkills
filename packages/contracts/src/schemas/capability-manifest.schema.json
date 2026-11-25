@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneorigin.dev/schemas/capability-manifest/v0.0.1.json",
+  "title": "OneOrigin Capability Manifest v0.0.1",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema", "id", "name", "version", "kind", "summary"],
+  "properties": {
+    "schema": { "const": "oneorigin.capability/v0.0.1" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "kind": {
+      "type": "string",
+      "enum": ["agent-skill", "human-skill", "system-capability", "workflow", "knowledge", "standard"]
+    },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "description": { "type": "string", "maxLength": 65536 },
+    "authors": { "type": "array", "items": { "type": "string" } },
+    "license": { "type": "string" },
+    "tags": {
+      "type": "array",
+      "maxItems": 32,
+      "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,31}$" }
+    },
+    "entry": { "type": "string", "not": { "anyOf": [{ "pattern": "^/" }, { "pattern": "(^|/)\\.\\.(/|$)" }] } },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "versionRange": { "type": "string" },
+          "optional": { "type": "boolean" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scope", "level", "reason"],
+        "properties": {
+          "scope": {
+            "type": "string",
+            "enum": ["workspace.read", "workspace.write", "network", "execution", "credentials", "model", "system"]
+          },
+          "level": { "type": "string", "enum": ["none", "ask", "grant"] },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "type": { "type": "string", "enum": ["command", "function", "http", "mcp-tool", "prompt", "resource"] },
+          "description": { "type": "string" },
+          "inputSchema": { "type": "object" },
+          "outputSchema": { "type": "object" }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "origin": { "type": "string" },
+        "publishedAt": { "type": "string", "format": "date-time" },
+        "signatures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["algorithm", "value"],
+            "properties": {
+              "algorithm": { "type": "string", "enum": ["ed25519", "sha256"] },
+              "value": { "type": "string" },
+              "signer": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "checksum": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "extensions": { "type": "object" }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@oneorigin/skill-kit",
+  "version": "0.0.1",
+  "description": "SKILL.md parsing, conformance, canonical identity and portable bundles.",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@oneorigin/contracts": "0.0.1",
+    "yaml": "^2.6.1"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.1"
+  }
+}

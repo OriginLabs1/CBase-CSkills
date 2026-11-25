@@ -1,0 +1,25 @@
+{
+  "name": "oneorigin",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "check": "npm run check --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "dev:skills": "npm run dev -w @oneorigin/coreskills",
+    "dev:base": "npm run dev -w @oneorigin/corebase",
+    "release:package": "bash scripts/package-release.sh"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.1"
+  }
+}

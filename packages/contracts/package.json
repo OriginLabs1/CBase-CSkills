@@ -1,0 +1,22 @@
+{
+  "name": "@oneorigin/contracts",
+  "version": "0.0.1",
+  "description": "Shared capability, trust, execution and portability contracts for OneOrigin.",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas/*": "./src/schemas/*"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.1"
+  }
+}
