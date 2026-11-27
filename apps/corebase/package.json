@@ -13,6 +13,9 @@
   "dependencies": {
     "@oneorigin/contracts": "0.0.1",
     "@oneorigin/skill-kit": "0.0.1",
+    "@oneorigin/client": "0.0.2",
+    "@oneorigin/identity": "0.0.2",
+    "@oneorigin/templates": "0.0.2",
     "@codemirror/commands": "^6.11.1",
     "@codemirror/lang-javascript": "^6.2.5",
     "@codemirror/lang-markdown": "^6.5.2",

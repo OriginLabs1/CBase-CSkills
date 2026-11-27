@@ -12,6 +12,11 @@ Conformance is executed by `npm test` in each workspace. The suite is determinis
 | Bundles | `packages/skill-kit/src/skill-kit.test.ts` | signature verification, item hash verification, unsafe path rejection |
 | CoreSkills helpers | `apps/coreskills` tests | filtering, import decisions, version ordering |
 | CoreBase helpers | `apps/corebase` tests | command parsing, permission decisions, audit chain, verification |
+| Identity and credentials | `packages/identity` tests | identity ids, OTP shape/limits, credential privacy |
+| Consent lifecycle | `packages/identity` tests | state transitions, decline, expiry, revocation, `user-content` boundary |
+| Verifiable envelopes | `packages/identity` tests | canonical content hash, hash proof, tampered records |
+| Templates | `packages/templates` tests | safe paths, file hashes, typed inputs, rendering, combination |
+| Persistence and sync | `packages/persistence` tests | event validation, chain integrity, conflict surfacing, adapter parity |
 
 ## Rules for new diagnostics
 

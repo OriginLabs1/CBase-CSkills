@@ -1,11 +1,22 @@
 <script lang="ts">
   import { CircleCheck, CircleExclamationPoint, Info, X } from '@lucide/svelte';
   import { onMount } from 'svelte';
+  import {
+    ServiceClient,
+    builtinTemplates,
+    getOrCreateLocalIdentity,
+    shortIdentity,
+    type ConsentGrant,
+    type IdentityStatus,
+    type RequestCodeResult,
+  } from '@oneorigin/client';
+  import { verifyTemplateFiles, type Template } from '@oneorigin/templates';
   import AboutView from '../lib/components/AboutView.svelte';
   import AppHeader from '../lib/components/AppHeader.svelte';
   import CatalogView from '../lib/components/CatalogView.svelte';
   import DetailView from '../lib/components/DetailView.svelte';
   import ImportView from '../lib/components/ImportView.svelte';
+  import TemplatesView from '../lib/components/TemplatesView.svelte';
   import { createSkillBundle } from '../lib/bundle.js';
   import { ensureSeeded, listSkills, listVersions, restoreVersion, storageStats } from '../lib/storage.js';
   import type { SkillRecord, SkillVersionRecord, ToastMessage, ViewName } from '../lib/types.js';
@@ -37,6 +48,18 @@ Write the instructions a human should follow. This text is advisory; it is never
   let authorRaw = $state(STARTER);
   let authorSeed = $state(0);
   let toast = $state<ToastMessage | null>(null);
+
+  let templates = $state<Template[]>([]);
+  let identityStatus = $state<IdentityStatus | null>(null);
+  let localIdentityId = $state('');
+  let consentGrants = $state<ConsentGrant[]>([]);
+  let offlineMessage = $state('');
+  let serviceClient: ServiceClient | null = null;
+  let serviceUrl = $derived(
+    (import.meta as unknown as { env?: Record<string, string> }).env?.VITE_ONEORIGIN_SERVICE_URL
+    ?? 'http://localhost:8787',
+  );
+  let identityLabel = $derived(identityStatus ? shortIdentity(identityStatus.identityId) : 'Guest');
 
   let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -73,11 +96,103 @@ Write the instructions a human should follow. This text is advisory; it is never
     try {
       await ensureSeeded();
       await refresh();
+      localIdentityId = (await getOrCreateLocalIdentity()).id;
+      templates = await builtinTemplates('coreskills');
+      serviceClient = new ServiceClient({ baseUrl: serviceUrl });
+      await Promise.all([loadRemoteTemplates(), refreshIdentity()]);
     } catch (error) {
       loadError = errorText(error);
     } finally {
       loading = false;
     }
+  }
+
+  /** Remote templates are additive; an offline service leaves guest mode intact. */
+  async function loadRemoteTemplates(): Promise<void> {
+    if (!serviceClient) return;
+    try {
+      const remote = await serviceClient.listTemplates('coreskills');
+      const verified: Template[] = [];
+      for (const template of remote) {
+        if ((await verifyTemplateFiles(template)).ok) verified.push(template);
+      }
+      const byId = new Map([...templates, ...verified].map((template) => [template.id, template]));
+      templates = [...byId.values()].sort((a, b) => a.name.localeCompare(b.name));
+    } catch {
+      // The built-in templates remain available offline.
+    }
+  }
+
+  async function refreshIdentity(): Promise<void> {
+    if (!serviceClient) return;
+    try {
+      identityStatus = await serviceClient.status();
+      consentGrants = identityStatus ? await serviceClient.listConsentGrants() : [];
+      offlineMessage = '';
+    } catch {
+      identityStatus = null;
+      consentGrants = [];
+      offlineMessage = 'The optional service is unreachable. Guest work continues offline.';
+    }
+  }
+
+  async function requestCode(email: string): Promise<RequestCodeResult | null> {
+    if (!serviceClient) return null;
+    try {
+      return await serviceClient.requestEmailCode(email);
+    } catch (error) {
+      offlineMessage = error instanceof Error ? error.message : 'Could not reach the optional service.';
+      return null;
+    }
+  }
+
+  async function verifyCode(challengeId: string, code: string): Promise<boolean> {
+    if (!serviceClient) return false;
+    try {
+      await serviceClient.verifyEmailCode(challengeId, code);
+      await refreshIdentity();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function refreshSession(): Promise<void> {
+    if (!serviceClient) return;
+    try {
+      const session = await serviceClient.refreshSession();
+      identityStatus = { mode: 'connected', identityId: session.identityId, session };
+    } catch {
+      await refreshIdentity();
+    }
+  }
+
+  async function revokeIdentity(): Promise<void> {
+    if (serviceClient) {
+      try {
+        await serviceClient.revokeSession();
+      } catch {
+        // Local sign-out still succeeds when the service is unavailable.
+      }
+    }
+    identityStatus = null;
+    consentGrants = [];
+  }
+
+  async function revokeConsent(id: string): Promise<void> {
+    if (!serviceClient) return;
+    try {
+      await serviceClient.consentAction(id, 'revoke');
+      await refreshIdentity();
+    } catch {
+      offlineMessage = 'Could not revoke that grant. Check the service connection.';
+    }
+  }
+
+  /** Templates open the editor; the ordinary save flow remains the only write path. */
+  function openTemplate(_template: Template, markdown: string): void {
+    openAuthor(markdown);
+    notify('Template opened for review. Save a version when you are happy with it.', 'info');
   }
 
   async function selectSkill(id: string): Promise<void> {
@@ -158,7 +273,7 @@ Write the instructions a human should follow. This text is advisory; it is never
 </svelte:head>
 
 <div class="min-h-screen bg-[radial-gradient(1000px_480px_at_50%_-140px,rgba(56,189,248,0.10),transparent_70%)]">
-  <AppHeader {view} onview={(next) => (view = next)} onnew={() => openAuthor()} />
+  <AppHeader {view} {identityLabel} onview={(next) => (view = next)} onnew={() => openAuthor()} />
 
   <main class="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 sm:pt-8">
     {#if loading}
@@ -190,6 +305,8 @@ Write the instructions a human should follow. This text is advisory; it is never
       </div>
     {:else if view === 'import'}
       <ImportView notify={notify} onimported={() => void refresh()} />
+    {:else if view === 'templates'}
+      <TemplatesView {templates} onUse={openTemplate} />
     {:else if view === 'author'}
       {#if AuthorView}
         {#key authorSeed}
@@ -207,7 +324,19 @@ Write the instructions a human should follow. This text is advisory; it is never
         <div class="rounded-2xl border border-ink-800 bg-ink-900/60 p-6 text-sm text-mist-200/60">Loading editor…</div>
       {/if}
     {:else if view === 'about'}
-      <AboutView {stats} />
+      <AboutView
+        {stats}
+        {localIdentityId}
+        status={identityStatus}
+        {serviceUrl}
+        {offlineMessage}
+        grants={consentGrants}
+        onRequestCode={(email) => requestCode(email)}
+        onVerifyCode={(challengeId, code) => verifyCode(challengeId, code)}
+        onRefreshIdentity={() => void refreshSession()}
+        onRevokeIdentity={() => void revokeIdentity()}
+        onRevokeGrant={(id) => void revokeConsent(id)}
+      />
     {:else}
       <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(330px,380px)]">
         <div class={selected ? 'hidden lg:block' : ''}>
@@ -260,7 +389,7 @@ Write the instructions a human should follow. This text is advisory; it is never
   </main>
 
   <footer class="border-t border-ink-800/70 py-5 text-center text-[11px] text-mist-200/35">
-    OneOrigin · CoreSkills v0.0.1 · Guest session · Stored only on this device
+    OneOrigin · CoreSkills v0.0.1 · {identityStatus ? 'Optional identity connected' : 'Guest session'} · Stored only on this device
   </footer>
 </div>
 

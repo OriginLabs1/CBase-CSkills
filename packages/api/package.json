@@ -1,0 +1,12 @@
+{
+  "name": "@oneorigin/api",
+  "version": "0.0.2",
+  "private": true,
+  "description": "OpenAPI contracts for the optional OneOrigin identity and observability service.",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "openapi.yaml",
+    "README.md"
+  ]
+}

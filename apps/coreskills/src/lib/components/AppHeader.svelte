@@ -1,14 +1,15 @@
 <script lang="ts">
-  import { BookOpen, Code, Library, Lock, Plus, Sparkles, Upload } from '@lucide/svelte';
+  import { BookOpen, Code, LayoutTemplate, Library, Lock, Plus, Sparkles, Upload } from '@lucide/svelte';
   import type { ViewName } from '../types.js';
 
   interface Props {
     view: ViewName;
+    identityLabel: string;
     onview: (view: ViewName) => void;
     onnew: () => void;
   }
 
-  let { view, onview, onnew }: Props = $props();
+  let { view, identityLabel, onview, onnew }: Props = $props();
 </script>
 
 <header class="sticky top-0 z-40 border-b border-ink-800/80 bg-ink-950/85 backdrop-blur-xl">
@@ -28,10 +29,12 @@
 
     <span
       class="inline-flex items-center gap-1.5 rounded-full border border-ink-700 bg-ink-850 px-2.5 py-1 text-[11px] font-medium text-mist-200/75 lg:ml-3"
-      title="Guest mode: data stays on this device; no sync, collaboration or privileged execution."
+      title={identityLabel === 'Guest'
+        ? 'Guest mode: data stays on this device; no sync, collaboration or privileged execution.'
+        : 'Connected to the optional identity service.'}
     >
       <Lock size={12} aria-hidden="true" />
-      Guest
+      {identityLabel}
     </span>
 
     <button
@@ -67,6 +70,17 @@
             : 'text-mist-200/55 hover:bg-ink-800/60 hover:text-mist-100'}"
         >
           <Upload size={15} aria-hidden="true" /> Import
+        </button>
+        <button
+          type="button"
+          onclick={() => onview('templates')}
+          aria-current={view === 'templates' ? 'page' : undefined}
+          class="inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition {view ===
+          'templates'
+            ? 'bg-ink-800 text-mist-100 ring-1 ring-inset ring-ink-700'
+            : 'text-mist-200/55 hover:bg-ink-800/60 hover:text-mist-100'}"
+        >
+          <LayoutTemplate size={15} aria-hidden="true" /> Templates
         </button>
         <button
           type="button"

@@ -1,5 +1,9 @@
 # Delivery roadmap
 
+## v0.0.2 planning
+
+The unified v0.0.2 blueprint adds shared identity, membership, consent, templates, optional PostgreSQL persistence and CoreCenter. The gap analysis, decisions and sequenced workstreams are in [docs/v0.0.2-gap-analysis.md](v0.0.2-gap-analysis.md). P0 (decisions) and P1 (shared contracts) are delivered; P2–P6 remain open. The milestones below describe the delivered v0.0.1 release.
+
 ## Milestone 0 — Shared specs & contracts (v0.0.1)
 
 **Goal:** make both products implementable without a central service.

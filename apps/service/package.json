@@ -1,0 +1,22 @@
+{
+  "name": "@oneorigin/service",
+  "version": "0.0.2",
+  "private": true,
+  "description": "Optional identity, consent, template and observability service for CoreBase and CoreSkills.",
+  "type": "module",
+  "scripts": {
+    "start": "node --import ../../scripts/register-ts.mjs src/index.mjs",
+    "dev": "npm run start",
+    "check": "node --check src/store.mjs && node --check src/otp.mjs && node --check src/email.mjs && node --check src/http.mjs && node --check src/index.mjs",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@oneorigin/contracts": "0.0.1",
+    "@oneorigin/identity": "0.0.2",
+    "@oneorigin/persistence": "0.0.2",
+    "@oneorigin/templates": "0.0.2"
+  },
+  "devDependencies": {
+    "vitest": "^5.1.1"
+  }
+}

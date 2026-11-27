@@ -1,30 +1,20 @@
 import {
   BUNDLE_SCHEMA,
+  base64ToBytes,
+  bytesToBase64,
   canonicalJson,
+  sha256Hex,
   validateCapabilityManifest,
   type Bundle,
   type BundleItem,
   type Diagnostic,
   type ValidationReport,
 } from '@oneorigin/contracts';
-import { sha256Hex } from './canonical.js';
 
 const encoder = new TextEncoder();
 
-export function bytesToBase64(bytes: Uint8Array): string {
-  let binary = '';
-  for (let i = 0; i < bytes.length; i += 8192) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
-  }
-  return btoa(binary);
-}
-
-export function base64ToBytes(value: string): Uint8Array {
-  const binary = atob(value);
-  const out = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i);
-  return out;
-}
+/** Re-exported for compatibility with v0.0.1 consumers. */
+export { base64ToBytes, bytesToBase64 };
 
 export async function itemFromBytes(path: string, mediaType: string, bytes: Uint8Array): Promise<BundleItem> {
   return { path, mediaType, bytes: bytesToBase64(bytes), sha256: await sha256Hex(bytes) };

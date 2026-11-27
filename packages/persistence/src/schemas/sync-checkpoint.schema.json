@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneorigin.dev/schemas/oneorigin.checkpoint/v0.0.2",
+  "title": "OneOrigin Sync Checkpoint",
+  "type": "object",
+  "required": ["schema", "storeId", "lastSequence", "headHash", "updatedAt"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "oneorigin.checkpoint/v0.0.2" },
+    "storeId": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "lastSequence": { "type": "integer", "minimum": 0 },
+    "headHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "updatedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$" }
+  }
+}

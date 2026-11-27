@@ -1,6 +1,6 @@
 import type { AuditStage, PermissionScope } from '@oneorigin/contracts';
 
-export type TabId = 'editor' | 'terminal' | 'audit' | 'agents' | 'settings';
+export type TabId = 'editor' | 'terminal' | 'templates' | 'audit' | 'agents' | 'settings';
 
 export type FileKind = 'file' | 'directory';
 
@@ -67,6 +67,8 @@ export interface AppSettings {
   approvalsEnabled: boolean;
   /** Content-bearing diagnostics. Off by default and never transmitted. */
   contentTelemetry: boolean;
+  /** Optional service URL. Guest work never contacts it. */
+  serviceUrl?: string;
 }
 
 export interface ApprovalRequest {

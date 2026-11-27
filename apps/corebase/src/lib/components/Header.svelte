@@ -8,14 +8,16 @@
     status: string;
     chain: ChainReport;
     adapterName: string;
+    identityLabel: string;
     onMenu: () => void;
   }
 
-  let { projectName, tab, status, chain, adapterName, onMenu }: Props = $props();
+  let { projectName, tab, status, chain, adapterName, identityLabel, onMenu }: Props = $props();
 
   const titles: Record<TabId, string> = {
     editor: 'Editor',
     terminal: 'Terminal',
+    templates: 'Templates',
     audit: 'Audit',
     agents: 'Agents',
     settings: 'Settings',
@@ -47,8 +49,11 @@
       <span class="size-1.5 rounded-full bg-good-400"></span>
       {adapterName} · sandboxed
     </span>
-    <span class="flex items-center gap-1.5 rounded-full border border-ink-700 bg-ink-850 px-2.5 py-1 text-[11px] text-mist-200/80">
-      <UserRound size={12} /> Guest
+    <span
+      class="flex items-center gap-1.5 rounded-full border border-ink-700 bg-ink-850 px-2.5 py-1 text-[11px] text-mist-200/80"
+      title={identityLabel === 'Guest' ? 'No service account; all data stays in this browser.' : 'Connected to the optional identity service.'}
+    >
+      <UserRound size={12} /> {identityLabel}
     </span>
     <span
       aria-live="polite"

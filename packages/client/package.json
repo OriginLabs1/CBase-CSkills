@@ -1,0 +1,26 @@
+{
+  "name": "@oneorigin/client",
+  "version": "0.0.2",
+  "description": "Optional service client, local identity helpers and portable templates for CoreBase and CoreSkills.",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@oneorigin/contracts": "0.0.1",
+    "@oneorigin/identity": "0.0.2",
+    "@oneorigin/templates": "0.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.1"
+  }
+}

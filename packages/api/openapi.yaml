@@ -1,0 +1,448 @@
+openapi: 3.1.0
+info:
+  title: OneOrigin Shared API
+  version: 0.0.2
+  description: |
+    Draft contract for the optional identity, consent, template and observability
+    service. The service is never mandatory: guest mode and local persistence
+    work without it. All deployments — user-controlled edge, OneOrigin-operated
+    PostgreSQL and independently operated PostgreSQL — implement this contract.
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8787
+    description: Local/self-hosted default
+paths:
+  /health:
+    get:
+      operationId: getServiceHealth
+      summary: Unauthenticated liveness probe
+      security: []
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, version]
+                properties:
+                  ok: { type: boolean }
+                  version: { type: string }
+                  streams: { type: integer, minimum: 0 }
+  /auth/email/request:
+    post:
+      operationId: requestEmailCode
+      summary: Request a six-digit email OTP
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 254
+      responses:
+        '202':
+          description: Accepted (always; never reveals whether an account exists)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  challengeId: { type: string }
+                  expiresAt: { type: string, format: date-time }
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /auth/email/verify:
+    post:
+      operationId: verifyEmailCode
+      summary: Verify an OTP and establish a session
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challengeId, code]
+              properties:
+                challengeId: { type: string }
+                code: { type: string, pattern: '^[0-9]{6}$' }
+      responses:
+        '200':
+          description: Authenticated
+          headers:
+            Set-Cookie:
+              description: Secure, HttpOnly, SameSite session cookie
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Session' }
+        '400':
+          $ref: '#/components/responses/InvalidCode'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /auth/session:
+    get:
+      operationId: getSession
+      summary: Current session, used by clients to detect a connected identity
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Active session
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Session' }
+        '401': { description: No active session; clients remain in guest mode }
+  /auth/session/refresh:
+    post:
+      operationId: refreshSession
+      summary: Rotate the current session
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Rotated session
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Session' }
+  /auth/session/revoke:
+    post:
+      operationId: revokeSession
+      summary: Revoke the current session immediately
+      security:
+        - sessionCookie: []
+      responses:
+        '204': { description: Revoked }
+  /memberships:
+    get:
+      operationId: listMemberships
+      summary: Verified memberships for the authenticated identity
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/IdentityId'
+      responses:
+        '200':
+          description: Membership records
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Record' }
+  /consent-grants:
+    get:
+      operationId: listConsentGrants
+      summary: Consent grants visible to the authenticated identity
+      description: Includes grants where the caller is subject, grantee or inviter.
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Consent grants
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Record' }
+    post:
+      operationId: createConsentGrant
+      summary: Create an invitation with disclosed scope
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Record' }
+      responses:
+        '201':
+          description: Invitation created in status invited
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+  /consent-grants/{id}:
+    get:
+      operationId: getConsentGrant
+      summary: Read a consent grant the caller is entitled to see
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Consent grant
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+        '404': { description: Not found }
+  /consent-grants/{id}/verify:
+    post:
+      operationId: verifyConsentGrant
+      summary: Attach a verified identity record before any scope is disclosed
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [verificationId]
+              properties:
+                verificationId: { type: string }
+      responses:
+        '200':
+          description: Grant with verification attached
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+        '409': { description: Grant is not in a verifiable state }
+  /consent-grants/{id}/disclose:
+    post:
+      operationId: discloseConsentScope
+      summary: Record the exact scope disclosed to the subject before acceptance
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scopeDisclosure]
+              properties:
+                scopeDisclosure: { type: string }
+      responses:
+        '200':
+          description: Grant with disclosed scope
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+        '409': { description: Grant is not in a disclosable state }
+  /consent-grants/{id}/accept:
+    post:
+      operationId: acceptConsentGrant
+      summary: Accept after verification and scope disclosure
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Active, auditable authorization record
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+        '409': { description: Invitation is not in an acceptable state }
+  /consent-grants/{id}/decline:
+    post:
+      operationId: declineConsentGrant
+      summary: Decline; grants no access
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Declined grant
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+  /consent-grants/{id}/revoke:
+    post:
+      operationId: revokeConsentGrant
+      summary: Immediately revoke an active grant
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Revoked grant
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+  /consent-grants/{id}/expire:
+    post:
+      operationId: expireConsentGrant
+      summary: Mark a grant expired after its deadline
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Expired grant
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+        '409': { description: Grant cannot be expired from its current state }
+  /verification/{id}:
+    get:
+      operationId: getVerificationRecord
+      summary: Independently verifiable record envelope
+      security:
+        - sessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Verifiable envelope
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+  /templates:
+    get:
+      operationId: listTemplates
+      summary: Discover templates for either product
+      security: []
+      parameters:
+        - name: product
+          in: query
+          schema: { enum: [corebase, coreskills] }
+        - name: kind
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Template list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Record' }
+  /templates/validate:
+    post:
+      operationId: validateTemplateDraft
+      summary: Validate structure, compatibility, permissions and provenance
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Record' }
+      responses:
+        '200':
+          description: Validation report
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationReport' }
+  /observability/health:
+    get:
+      operationId: getObservabilityHealth
+      summary: Authorized operational health across CoreBase and CoreSkills
+      description: |
+        Requires an active, scoped observability consent grant. Operational
+        metadata only; user content requires a separate explicit authorization.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: product
+          in: query
+          required: true
+          schema: { enum: [corebase, coreskills] }
+        - name: consentGrantId
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Health snapshot with live/offline/stale indicator
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ObservabilitySnapshot' }
+        '403': { description: No active consent grant }
+  /observability/events:
+    get:
+      operationId: streamObservabilityEvents
+      summary: Server-sent events for CoreCenter when connected
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: product
+          in: query
+          required: true
+          schema: { enum: [corebase, coreskills] }
+        - name: consentGrantId
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: SSE stream; clients must display offline/stale indicators
+          content:
+            text/event-stream:
+              schema: { type: string }
+        '403': { description: No active consent grant }
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: oneorigin_session
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+    IdentityId:
+      name: identityId
+      in: query
+      required: false
+      description: Optional; may only equal the authenticated identity.
+      schema: { type: string, pattern: '^urn:oneorigin:identity:[0-9a-f]{64}$' }
+  responses:
+    RateLimited:
+      description: Too many requests; retry later
+    InvalidCode:
+      description: Incorrect, expired, exhausted or already-used code
+  schemas:
+    Session:
+      type: object
+      properties:
+        id: { type: string }
+        identityId: { type: string, pattern: '^urn:oneorigin:identity:[0-9a-f]{64}$' }
+        issuedAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+    Record:
+      type: object
+      description: |
+        Domain record shaped by the published JSON Schema (identity, membership,
+        consent grant, verifiable envelope or template). See packages/*/src/schemas.
+      additionalProperties: true
+    ValidationReport:
+      type: object
+      required: [ok, diagnostics]
+      properties:
+        ok: { type: boolean }
+        diagnostics:
+          type: array
+          items:
+            type: object
+            properties:
+              code: { type: string }
+              severity: { enum: [error, warning, info] }
+              path: { type: string }
+              message: { type: string }
+    ObservabilitySnapshot:
+      type: object
+      required: [status, product, at]
+      properties:
+        status: { enum: [live, offline, stale] }
+        product: { enum: [corebase, coreskills] }
+        at: { type: string, format: date-time }
+        health: { type: object }
+        consentGrantId: { type: string }

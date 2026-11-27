@@ -40,7 +40,7 @@ export interface SettingsRecord {
   value: unknown;
 }
 
-export type ViewName = 'catalog' | 'import' | 'author' | 'about';
+export type ViewName = 'catalog' | 'import' | 'templates' | 'author' | 'about';
 export type SortKey = 'name' | 'updated';
 export type LayoutKey = 'grid' | 'list';
 

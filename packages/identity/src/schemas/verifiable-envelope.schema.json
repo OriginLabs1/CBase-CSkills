@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneorigin.dev/schemas/oneorigin.verification/v0.0.2",
+  "title": "OneOrigin Verifiable Envelope",
+  "type": "object",
+  "required": ["schema", "kind", "subject", "issuer", "issuedAt", "payload", "contentHash"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "oneorigin.verification/v0.0.2" },
+    "kind": { "enum": ["identity", "email-credential", "profile", "membership", "consent", "authorization"] },
+    "subject": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "issuer": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "issuedAt": { "$ref": "#/$defs/timestamp" },
+    "expiresAt": { "$ref": "#/$defs/timestamp" },
+    "payload": { "type": "object" },
+    "contentHash": { "$ref": "#/$defs/hashRef" },
+    "proof": {
+      "type": "object",
+      "required": ["algorithm", "value", "signer", "signedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": { "enum": ["ed25519", "sha256"] },
+        "value": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "signer": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "signedAt": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "chain": {
+      "type": "object",
+      "required": ["previousHash", "recordHash"],
+      "additionalProperties": false,
+      "properties": {
+        "previousHash": { "$ref": "#/$defs/hash" },
+        "recordHash": { "$ref": "#/$defs/hash" }
+      }
+    }
+  },
+  "$defs": {
+    "timestamp": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$" },
+    "hashRef": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "hash": { "type": "string", "pattern": "^(sha256:)?[0-9a-f]{64}$" }
+  }
+}

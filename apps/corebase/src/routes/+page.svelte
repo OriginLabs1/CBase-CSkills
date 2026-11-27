@@ -3,7 +3,19 @@
   import type { AuditEntry, Grant } from '@oneorigin/contracts';
   import { randomId } from '@oneorigin/contracts';
   import {
+    ServiceClient,
+    builtinTemplates,
+    getOrCreateLocalIdentity,
+    renderTextFiles,
+    shortIdentity,
+    type ConsentGrant,
+    type IdentityStatus,
+    type RequestCodeResult,
+  } from '@oneorigin/client';
+  import { verifyTemplateFiles, type Template } from '@oneorigin/templates';
+  import {
     Bot,
+    LayoutTemplate,
     LoaderCircle,
     PencilLine,
     ScrollText,
@@ -17,6 +29,7 @@
   import Header from '../lib/components/Header.svelte';
   import SettingsPanel from '../lib/components/SettingsPanel.svelte';
   import Sidebar from '../lib/components/Sidebar.svelte';
+  import TemplatesPanel from '../lib/components/TemplatesPanel.svelte';
   import TerminalPanel from '../lib/components/TerminalPanel.svelte';
   import { adapterById, modelAdapters, type StructuredPlan } from '../lib/agents';
   import { createUserCheckpoint, restoreUserCheckpoint } from '../lib/checkpoints';
@@ -50,6 +63,7 @@
   const tabs = [
     { id: 'editor' as const, label: 'Editor', icon: PencilLine },
     { id: 'terminal' as const, label: 'Terminal', icon: SquareTerminal },
+    { id: 'templates' as const, label: 'Templates', icon: LayoutTemplate },
     { id: 'audit' as const, label: 'Audit', icon: ScrollText },
     { id: 'agents' as const, label: 'Agents', icon: Bot },
     { id: 'settings' as const, label: 'Settings', icon: Settings },
@@ -98,6 +112,19 @@
   let checkpoints = $state<Checkpoint[]>([]);
   let settings = $state<AppSettings | null>(null);
 
+  let templates = $state<Template[]>([]);
+  let identityStatus = $state<IdentityStatus | null>(null);
+  let localIdentityId = $state('');
+  let consentGrants = $state<ConsentGrant[]>([]);
+  let offlineMessage = $state('');
+  let serviceClient: ServiceClient | null = null;
+  let serviceUrl = $derived(
+    settings?.serviceUrl
+    ?? (import.meta as unknown as { env?: Record<string, string> }).env?.VITE_ONEORIGIN_SERVICE_URL
+    ?? 'http://localhost:8787',
+  );
+  let identityLabel = $derived(identityStatus ? shortIdentity(identityStatus.identityId) : 'Guest');
+
   let approvalRequest = $state<ApprovalRequest | null>(null);
   let approvalResolver: ((approved: boolean) => void) | null = null;
   let dialog = $state<DialogState | null>(null);
@@ -127,8 +154,118 @@
     await refreshAudit();
     if (projects.length > 0) await selectProject(projects[0].id);
     await refreshCheckpoints();
+    localIdentityId = (await getOrCreateLocalIdentity()).id;
+    templates = await builtinTemplates('corebase');
+    serviceClient = new ServiceClient({ baseUrl: serviceUrl });
+    await Promise.all([loadRemoteTemplates(), refreshIdentity()]);
     ready = true;
     status = 'Ready';
+  }
+
+  /** Remote templates are additive; a failed or offline service changes nothing. */
+  async function loadRemoteTemplates(): Promise<void> {
+    if (!serviceClient) return;
+    try {
+      const remote = await serviceClient.listTemplates('corebase');
+      const verified: Template[] = [];
+      for (const template of remote) {
+        if ((await verifyTemplateFiles(template)).ok) verified.push(template);
+      }
+      const byId = new Map([...templates, ...verified].map((template) => [template.id, template]));
+      templates = [...byId.values()].sort((a, b) => a.name.localeCompare(b.name));
+    } catch {
+      // Guest mode is unaffected by an unreachable optional service.
+    }
+  }
+
+  async function refreshIdentity(): Promise<void> {
+    if (!serviceClient) return;
+    try {
+      identityStatus = await serviceClient.status();
+      consentGrants = identityStatus ? await serviceClient.listConsentGrants() : [];
+      offlineMessage = '';
+    } catch {
+      identityStatus = null;
+      consentGrants = [];
+      offlineMessage = 'The optional service is unreachable. Guest work continues offline.';
+    }
+  }
+
+  async function requestCode(email: string): Promise<RequestCodeResult | null> {
+    if (!serviceClient) return null;
+    try {
+      return await serviceClient.requestEmailCode(email);
+    } catch (error) {
+      offlineMessage = error instanceof Error ? error.message : 'Could not reach the optional service.';
+      return null;
+    }
+  }
+
+  async function verifyCode(challengeId: string, code: string): Promise<boolean> {
+    if (!serviceClient) return false;
+    try {
+      await serviceClient.verifyEmailCode(challengeId, code);
+      await refreshIdentity();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function refreshSession(): Promise<void> {
+    if (!serviceClient) return;
+    try {
+      const session = await serviceClient.refreshSession();
+      identityStatus = { mode: 'connected', identityId: session.identityId, session };
+    } catch {
+      await refreshIdentity();
+    }
+  }
+
+  async function revokeIdentity(): Promise<void> {
+    if (serviceClient) {
+      try {
+        await serviceClient.revokeSession();
+      } catch {
+        // Local sign-out still succeeds even if the service is unreachable.
+      }
+    }
+    identityStatus = null;
+    consentGrants = [];
+  }
+
+  async function revokeConsent(id: string): Promise<void> {
+    if (!serviceClient) return;
+    try {
+      await serviceClient.consentAction(id, 'revoke');
+      await refreshIdentity();
+    } catch {
+      offlineMessage = 'Could not revoke that grant. Check the service connection.';
+    }
+  }
+
+  /** Templates create ordinary local projects; no privileged action is implied. */
+  async function applyTemplate(template: Template, values: Record<string, unknown>): Promise<void> {
+    const files = await renderTextFiles(template, values);
+    const at = new Date().toISOString();
+    const project: Project = {
+      id: `proj_tpl_${Date.now().toString(36)}`,
+      name: String(values.projectName ?? template.name),
+      description: template.summary,
+      createdAt: at,
+      updatedAt: at,
+    };
+    await store.saveProject(project);
+    for (const file of files) {
+      await store.putFile(store.makeFile(project.id, file.path, file.content, 'file'));
+    }
+    await auditDirectAction(`Applied template ${template.name}`, {
+      projectId: project.id, templateId: template.id, files: files.length,
+    });
+    projects = await store.listProjects();
+    await selectProject(project.id);
+    tab = 'editor';
+    status = `Applied ${template.name}`;
   }
 
   async function refreshAudit(): Promise<void> {
@@ -419,6 +556,7 @@
       {status}
       {chain}
       adapterName="Virtual shell"
+      {identityLabel}
       onMenu={() => (sidebarOpen = true)}
     />
 
@@ -505,6 +643,8 @@
               onRun={(command) => void runCommand(command)}
               onClear={() => void clearTerminal()}
             />
+          {:else if tab === 'templates'}
+            <TemplatesPanel {templates} onApply={(template, values) => void applyTemplate(template, values)} />
           {:else if tab === 'audit'}
             <AuditPanel entries={auditEntries} {chain} onRefresh={() => void refreshAudit()} />
           {:else if tab === 'agents'}
@@ -524,6 +664,16 @@
               {checkpoints}
               settings={settings ?? fallbackSettings}
               {chain}
+              {identityStatus}
+              {localIdentityId}
+              {serviceUrl}
+              {offlineMessage}
+              consentGrants={consentGrants}
+              onRequestCode={(email) => requestCode(email)}
+              onVerifyCode={(challengeId, code) => verifyCode(challengeId, code)}
+              onRefreshIdentity={() => void refreshSession()}
+              onRevokeIdentity={() => void revokeIdentity()}
+              onRevokeGrant={(id) => void revokeConsent(id)}
               onRevoke={(id) => void handleRevoke(id)}
               onSaveCheckpoint={(label) => void handleCheckpoint(label)}
               onRestoreCheckpoint={(checkpoint) => void handleRestore(checkpoint)}

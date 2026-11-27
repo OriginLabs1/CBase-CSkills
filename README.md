@@ -11,8 +11,12 @@ Both are independently useful, deployable, extensible and self-hostable. Neither
 
 ```
 packages/            Shared, dependency-light contracts and libraries
-  contracts/         Capability manifest, permissions, audit and result types
+  contracts/         Capability manifest, permissions, audit, hash/base64 primitives
   skill-kit/         SKILL.md parsing, conformance, versioning and export
+  identity/          v0.0.2 identity, membership, consent and verifiable records
+  templates/         v0.0.2 portable template lifecycle and composition
+  persistence/       v0.0.2 adapter, event journal and sync contracts
+  api/               Draft OpenAPI surface for the optional service
 apps/
   coreskills/        Capability catalog (SvelteKit PWA)
   corebase/          Work and execution environment (SvelteKit PWA)
@@ -31,6 +35,7 @@ docs/
 | CoreBase v0.0.1 | Delivered |
 | Repo + Cloudflare setup | Delivered |
 | Distribution / release | Delivered — [v0.0.1](https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1) |
+| Unified v0.0.2 blueprint | P0/P1 delivered — [gap analysis and sequenced plan](docs/v0.0.2-gap-analysis.md) |
 
 Live apps: [CoreSkills](https://coreskills.cculture.net) · [CoreBase](https://corebase.cculture.net)
 

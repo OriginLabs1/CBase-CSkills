@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Grant } from '@oneorigin/contracts';
+  import type { ConsentGrant, IdentityStatus, RequestCodeResult } from '@oneorigin/client';
   import {
     Clock,
     HardDrive,
@@ -12,16 +13,27 @@
   import { isGrantActive } from '../helpers';
   import { STORE_NAMES } from '../storage';
   import type { AppSettings, ChainReport, Checkpoint } from '../types';
+  import IdentityPanel from './IdentityPanel.svelte';
 
   interface Props {
     grants: Grant[];
     checkpoints: Checkpoint[];
     settings: AppSettings;
     chain: ChainReport;
+    identityStatus: IdentityStatus | null;
+    localIdentityId: string;
+    serviceUrl: string;
+    offlineMessage: string;
+    consentGrants: ConsentGrant[];
     onRevoke: (id: string) => void;
     onSaveCheckpoint: (label: string) => void;
     onRestoreCheckpoint: (checkpoint: Checkpoint) => void;
     onUpdateSettings: (patch: Partial<AppSettings>) => void;
+    onRequestCode: (email: string) => Promise<RequestCodeResult | null>;
+    onVerifyCode: (challengeId: string, code: string) => Promise<boolean>;
+    onRefreshIdentity: () => void;
+    onRevokeIdentity: () => void;
+    onRevokeGrant: (id: string) => void;
   }
 
   let {
@@ -29,10 +41,20 @@
     checkpoints,
     settings,
     chain,
+    identityStatus,
+    localIdentityId,
+    serviceUrl,
+    offlineMessage,
+    consentGrants,
     onRevoke,
     onSaveCheckpoint,
     onRestoreCheckpoint,
     onUpdateSettings,
+    onRequestCode,
+    onVerifyCode,
+    onRefreshIdentity,
+    onRevokeIdentity,
+    onRevokeGrant,
   }: Props = $props();
 
   let label = $state('');
@@ -61,6 +83,19 @@
         Guest mode: all data stays in this browser. No account, sync, collaboration or privileged execution is available.
       </p>
     </div>
+
+    <IdentityPanel
+      {localIdentityId}
+      status={identityStatus}
+      {serviceUrl}
+      {offlineMessage}
+      grants={consentGrants}
+      onRequest={onRequestCode}
+      onVerify={onVerifyCode}
+      onRefresh={onRefreshIdentity}
+      onRevoke={onRevokeIdentity}
+      onRevokeGrant={onRevokeGrant}
+    />
 
     <section class="rounded-xl border border-ink-800 bg-ink-900/60 p-4">
       <h3 class="flex items-center gap-2 text-sm font-medium"><ShieldCheck size={15} class="text-good-400" /> Privacy & authorization</h3>
