@@ -19,7 +19,7 @@
     "@oneorigin/contracts": "0.0.1"
   },
   "devDependencies": {
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   }
 }
