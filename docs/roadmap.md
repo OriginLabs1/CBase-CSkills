@@ -2,7 +2,7 @@
 
 ## v0.0.2 planning
 
-The unified v0.0.2 blueprint adds shared identity, membership, consent, templates, optional PostgreSQL persistence and CoreCenter. The gap analysis, decisions and sequenced workstreams are in [docs/v0.0.2-gap-analysis.md](v0.0.2-gap-analysis.md). P0 (decisions) and P1 (shared contracts) are delivered; P2–P6 remain open. The milestones below describe the delivered v0.0.1 release.
+The unified v0.0.2 blueprint adds shared identity, membership, consent, templates, optional PostgreSQL persistence and CoreCenter. The gap analysis, decisions and sequenced workstreams are in [docs/v0.0.2-gap-analysis.md](v0.0.2-gap-analysis.md). P0 (decisions), P1 (shared contracts), P2 (product integration) and P3 (optional service) are delivered; CoreCenter is maintained in the external `OriginLabs1/CoreCenter` repository. The milestones below describe the v0.0.1 baseline that v0.0.2 extends additively.
 
 ## Milestone 0 — Shared specs & contracts (v0.0.1)
 

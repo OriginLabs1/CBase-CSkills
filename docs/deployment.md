@@ -47,20 +47,20 @@ Cloudflare Pages projects:
 
 The `*-pwa` projects are the installable applications; the `404.html` fallback provides SPA routing. The `*-pages` projects are static presentation and documentation sites sharing `apps/pages-shared` assets, synced by `npm run pages:sync`. All four use the production branch `main`, with proxied CNAMEs to the matching `*.pages.dev` project domains.
 
-Live v0.0.1 deployments:
+Live v0.0.2 deployments:
 
 - CoreSkills app: https://coreskills.cculture.net
 - CoreBase app: https://corebase.cculture.net
 - CoreSkills docs: https://coreskills-pages.cculture.net
 - CoreBase docs: https://corebase-pages.cculture.net
 
-Published release: https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1
+Published release: https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.2
 
 ## Release process
 
 1. Complete milestone acceptance criteria in `docs/roadmap.md`.
 2. Update version numbers in root, package and app manifests.
-3. Tag and push: `git tag v0.0.1 && git push origin v0.0.1`.
+3. Tag and push: `git tag v0.0.2 && git push origin v0.0.2`.
 4. `release.yml` publishes source, both web builds and checksums.
 5. Cloudflare deploys `main`; GitHub Releases carry distributable artifacts.
 

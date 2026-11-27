@@ -31,11 +31,11 @@ docs/
 | Milestone | Status |
 | --- | --- |
 | Shared specs & contracts | Delivered |
-| CoreSkills v0.0.1 | Delivered |
-| CoreBase v0.0.1 | Delivered |
+| CoreSkills v0.0.2 | Delivered — additive to v0.0.1 |
+| CoreBase v0.0.2 | Delivered — additive to v0.0.1 |
 | Repo + Cloudflare setup | Delivered |
-| Distribution / release | Delivered — [v0.0.1](https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.1) |
-| Unified v0.0.2 blueprint | P0/P1 delivered — [gap analysis and sequenced plan](docs/v0.0.2-gap-analysis.md) |
+| Distribution / release | Delivered — [v0.0.2](https://github.com/OriginLabs1/CBase-CSkills/releases/tag/v0.0.2) |
+| Unified v0.0.2 blueprint | P0–P3 delivered; CoreCenter is external — [gap analysis and sequenced plan](docs/v0.0.2-gap-analysis.md) |
 
 Live apps: [CoreSkills](https://coreskills.cculture.net) · [CoreBase](https://corebase.cculture.net)
 
